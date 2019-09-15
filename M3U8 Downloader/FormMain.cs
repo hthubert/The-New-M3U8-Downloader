@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
 using System.Diagnostics;
@@ -13,11 +12,11 @@ using System.Threading;
 
 namespace M3U8_Downloader
 {
-    public partial class Form1 : Form
+    public partial class FormMain : Form
     {
         //任务栏进度条的实现。
         private TaskbarManager windowsTaskbar = TaskbarManager.Instance;
-        
+
         //拖动窗口
         [DllImport("user32.dll")]
         public static extern bool ReleaseCapture();
@@ -36,18 +35,17 @@ namespace M3U8_Downloader
         [DllImport("kernel32.dll")]
         static extern bool FreeConsole();
         [DllImport("user32.dll")]
-        public static extern bool FlashWindow(IntPtr hWnd,bool bInvert );
+        public static extern bool FlashWindow(IntPtr hWnd, bool bInvert);
 
 
         int ffmpegid = -1;
-        Double big = 0;
-        Double small = 0;
+        double big = 0;
+        double small = 0;
 
         //不影响点击任务栏图标最大最小化
         protected override CreateParams CreateParams
         {
-            get
-            {
+            get {
                 const int WS_MINIMIZEBOX = 0x00020000;  // Winuser.h中定义
                 CreateParams cp = base.CreateParams;
                 cp.Style = cp.Style | WS_MINIMIZEBOX;   // 允许最小化操作
@@ -55,11 +53,11 @@ namespace M3U8_Downloader
             }
         }
 
-        public Form1()
+        public FormMain()
         {
             InitializeComponent();
             Init();
-            Control.CheckForIllegalCrossThreadCalls = false;  //禁止编译器对跨线程访问做检查
+            CheckForIllegalCrossThreadCalls = false;  //禁止编译器对跨线程访问做检查
         }
 
         private void textBox_Adress_DragEnter(object sender, DragEventArgs e)
@@ -80,17 +78,17 @@ namespace M3U8_Downloader
                 var filenames = (string[])e.Data.GetData(DataFormats.FileDrop);
                 var hz = filenames[0].LastIndexOf('.') + 1;
                 var houzhui = filenames[0].Substring(hz);//文件后缀名
-                if (houzhui == "m3u8"||houzhui == "mkv"||houzhui == "avi"||houzhui == "mp4"||houzhui == "ts"||houzhui == "flv"||houzhui == "f4v"||
-                    houzhui == "wmv"||houzhui == "wm"||houzhui == "mpeg"||houzhui == "mpg"||houzhui == "m4v"||houzhui == "3gp"||houzhui == "rm"||
+                if (houzhui == "m3u8" || houzhui == "mkv" || houzhui == "avi" || houzhui == "mp4" || houzhui == "ts" || houzhui == "flv" || houzhui == "f4v" ||
+                    houzhui == "wmv" || houzhui == "wm" || houzhui == "mpeg" || houzhui == "mpg" || houzhui == "m4v" || houzhui == "3gp" || houzhui == "rm" ||
                     houzhui == "rmvb" || houzhui == "mov" || houzhui == "qt" || houzhui == "m2ts" || houzhui == "m3u" || houzhui == "mts" || houzhui == "txt") //只允许拖入部分文件
                 {
                     e.Effect = DragDropEffects.All;
                     string path = ((System.Array)e.Data.GetData(DataFormats.FileDrop)).GetValue(0).ToString();
                     textBox_Adress.Text = path; //将获取到的完整路径赋值到textBox1
                 }
-                
-            }        
-            
+
+            }
+
         }
 
         private void button_Quit_Click(object sender, EventArgs e)
@@ -100,7 +98,7 @@ namespace M3U8_Downloader
             {
                 if (Process.GetProcessById(ffmpegid) != null)
                 {
-                    if (MessageBox.Show("已启动下载进程，确认退出吗？\n（这有可能是强制的）", "请确认您的操作", MessageBoxButtons.YesNo, MessageBoxIcon.Warning) == System.Windows.Forms.DialogResult.Yes)
+                    if (MessageBox.Show("已启动下载进程，确认退出吗？\n（这有可能是强制的）", "请确认您的操作", MessageBoxButtons.YesNo, MessageBoxIcon.Warning) == DialogResult.Yes)
                     {
                         Stop();
                         MessageBox.Show("已经发送命令！\n若进程仍然存在则强制结束！", "请确认");
@@ -152,7 +150,7 @@ namespace M3U8_Downloader
         }
 
         //格式化大小输出
-        public static String FormatFileSize(Double fileSize)
+        public static string FormatFileSize(double fileSize)
         {
             if (fileSize < 0)
             {
@@ -160,15 +158,15 @@ namespace M3U8_Downloader
             }
             else if (fileSize >= 1024 * 1024 * 1024)
             {
-                return string.Format("{0:########0.00} GB", ((Double)fileSize) / (1024 * 1024 * 1024));
+                return string.Format("{0:########0.00} GB", ((double)fileSize) / (1024 * 1024 * 1024));
             }
             else if (fileSize >= 1024 * 1024)
             {
-                return string.Format("{0:####0.00} MB", ((Double)fileSize) / (1024 * 1024));
+                return string.Format("{0:####0.00} MB", ((double)fileSize) / (1024 * 1024));
             }
             else if (fileSize >= 1024)
             {
-                return string.Format("{0:####0.00} KB", ((Double)fileSize) / 1024);
+                return string.Format("{0:####0.00} KB", ((double)fileSize) / 1024);
             }
             else
             {
@@ -193,18 +191,18 @@ namespace M3U8_Downloader
             { label6.Text = "[已下载：" + time.OfType<Match>().Last() + "，" + FormatFileSize(Convert.ToDouble(sizekb.OfType<Match>().Last().ToString().Replace("kB time", "")) * 1024) + "]"; }
             Regex fps = new Regex(@", (\S+)\sfps", RegexOptions.Compiled | RegexOptions.Singleline);//取视频帧数
             Regex resolution = new Regex(@", \d{2,}x\d{2,}", RegexOptions.Compiled | RegexOptions.Singleline);//取视频分辨率
-            label7.Text = "[视频信息：" + resolution.Match(textBox_Info.Text).Value.Replace(", ","") + "，" + fps.Match(textBox_Info.Text).Value.Replace(", ", "") + "]";
+            label7.Text = "[视频信息：" + resolution.Match(textBox_Info.Text).Value.Replace(", ", "") + "，" + fps.Match(textBox_Info.Text).Value.Replace(", ", "") + "]";
             if (time.Count > 0 && sizekb.Count > 0)  //防止程序太快 无法截取
             {
                 try
                 {
-                    Double All = Convert.ToDouble(Convert.ToDouble(label5.Text.Substring(5, 2)) * 60 * 60 + Convert.ToDouble(label5.Text.Substring(8, 2)) * 60
+                    double All = Convert.ToDouble(Convert.ToDouble(label5.Text.Substring(5, 2)) * 60 * 60 + Convert.ToDouble(label5.Text.Substring(8, 2)) * 60
                 + Convert.ToDouble(label5.Text.Substring(11, 2)) + Convert.ToDouble(label5.Text.Substring(14, 2)) / 100);
-                    Double Downloaded = Convert.ToDouble(Convert.ToDouble(label6.Text.Substring(5, 2)) * 60 * 60 + Convert.ToDouble(label6.Text.Substring(8, 2)) * 60
+                    double Downloaded = Convert.ToDouble(Convert.ToDouble(label6.Text.Substring(5, 2)) * 60 * 60 + Convert.ToDouble(label6.Text.Substring(8, 2)) * 60
                     + Convert.ToDouble(label6.Text.Substring(11, 2)) + Convert.ToDouble(label6.Text.Substring(14, 2)) / 100);
 
                     if (All == 0) All = 1;  //防止被除数为零导致程序崩溃
-                    Double Progress = (Downloaded / All) * 100;
+                    double Progress = (Downloaded / All) * 100;
 
                     if (Progress > 100)  //防止进度条超过百分之百
                         Progress = 100;
@@ -214,17 +212,17 @@ namespace M3U8_Downloader
                     ProgressBar.Value = Convert.ToInt32(Progress);
                     windowsTaskbar.SetProgressValue(Convert.ToInt32(Progress), 100, this.Handle);
                     label_Progress.Visible = true;
-                    label_Progress.Text = "已完成：" + String.Format("{0:F}", Progress) + "%";
-                    this.Text = "已完成：" + String.Format("{0:F}", Progress) + "%" + " [" + FormatFileSize((big - small) * 1024) + "/s]";
+                    label_Progress.Text = "已完成：" + string.Format("{0:F}", Progress) + "%";
+                    this.Text = "已完成：" + string.Format("{0:F}", Progress) + "%" + " [" + FormatFileSize((big - small) * 1024) + "/s]";
                 }
-                catch(Exception)
+                catch (Exception)
                 {
                     try
                     {
                         label5.Text = "[总时长：NULL]";
-                        Double Downloaded = Convert.ToDouble(Convert.ToDouble(label6.Text.Substring(5, 2)) * 60 * 60 + Convert.ToDouble(label6.Text.Substring(8, 2)) * 60
+                        double Downloaded = Convert.ToDouble(Convert.ToDouble(label6.Text.Substring(5, 2)) * 60 * 60 + Convert.ToDouble(label6.Text.Substring(8, 2)) * 60
                     + Convert.ToDouble(label6.Text.Substring(11, 2)) + Convert.ToDouble(label6.Text.Substring(14, 2)) / 100);
-                        Double Progress = 100;
+                        double Progress = 100;
 
                         if (Progress > 100)  //防止进度条超过百分之百
                             Progress = 100;
@@ -234,13 +232,13 @@ namespace M3U8_Downloader
                         ProgressBar.Value = Convert.ToInt32(Progress);
                         windowsTaskbar.SetProgressValue(Convert.ToInt32(Progress), 100, this.Handle);
                         label_Progress.Visible = true;
-                        label_Progress.Text = "已完成：" + String.Format("{0:F}", Progress) + "%";
-                        this.Text = "已完成：" + String.Format("{0:F}", Progress) + "%" + " [" + FormatFileSize((big - small) * 1024) + "/s]";
+                        label_Progress.Text = "已完成：" + string.Format("{0:F}", Progress) + "%";
+                        this.Text = "已完成：" + string.Format("{0:F}", Progress) + "%" + " [" + FormatFileSize((big - small) * 1024) + "/s]";
                     }
                     catch (Exception) { }
                 }
             }
-            
+
         }
 
         private void Form1_Load(object sender, EventArgs e)
@@ -255,10 +253,10 @@ namespace M3U8_Downloader
                 Dispose();
                 Application.Exit();
             }
-            if (File.Exists(System.Environment.GetFolderPath(System.Environment.SpecialFolder.MyDocuments) + "\\M3u8_Downloader_Settings.xml"))  //判断程序目录有无配置文件，并读取文件
+            if (File.Exists(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) + "\\M3u8_Downloader_Settings.xml"))  //判断程序目录有无配置文件，并读取文件
             {
                 XmlDocument doc = new XmlDocument();
-                doc.Load(@System.Environment.GetFolderPath(System.Environment.SpecialFolder.MyDocuments) + "\\M3u8_Downloader_Settings.xml");    //加载Xml文件  
+                doc.Load(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) + "\\M3u8_Downloader_Settings.xml");    //加载Xml文件  
                 XmlNodeList topM = doc.SelectNodes("Settings");
                 foreach (XmlElement element in topM)
                 {
@@ -271,7 +269,7 @@ namespace M3U8_Downloader
             }
             else  //若无配置文件，获取当前程序运行路径，即为默认下载路径
             {
-                string lujing = System.Environment.CurrentDirectory;
+                string lujing = Environment.CurrentDirectory;
                 textBox_DownloadPath.Text = lujing;
             }
         }
@@ -300,10 +298,10 @@ namespace M3U8_Downloader
             {
                 if (Process.GetProcessById(ffmpegid) != null)
                 {
-                    if (MessageBox.Show("已启动下载进程，确认退出吗？\n（这有可能是强制的）", "请确认您的操作", MessageBoxButtons.YesNo, MessageBoxIcon.Warning) == System.Windows.Forms.DialogResult.Yes)
+                    if (MessageBox.Show("已启动下载进程，确认退出吗？\n（这有可能是强制的）", "请确认您的操作", MessageBoxButtons.YesNo, MessageBoxIcon.Warning) == DialogResult.Yes)
                     {
                         Stop();
-                        MessageBox.Show("已经发送命令！\n若进程仍然存在则强制结束！", "请确认"); 
+                        MessageBox.Show("已经发送命令！\n若进程仍然存在则强制结束！", "请确认");
                         try
                         {
                             if (Process.GetProcessById(ffmpegid) != null)  //如果进程还存在就强制结束它
@@ -318,20 +316,21 @@ namespace M3U8_Downloader
                             Dispose();
                             Application.Exit();
                         }
-                                
+
                     }
                     else
                     {
                     }
                 }
             }
-            catch {
+            catch
+            {
                 Dispose();
                 Application.Exit();
             }
         }
 
-        
+
 
         private void Form1_MouseDown(object sender, MouseEventArgs e)
         {
@@ -360,11 +359,11 @@ namespace M3U8_Downloader
 
         private void Label_WriteLog_Click(object sender, EventArgs e)
         {
-            String LogName = "日志-" + System.DateTime.Now.ToString("yyyy.MM.dd-HH.mm.ss") + ".txt";
+            string LogName = "日志-" + DateTime.Now.ToString("yyyy.MM.dd-HH.mm.ss") + ".txt";
             StreamWriter log = new StreamWriter(LogName);
             log.WriteLine("━━━━━━━━━━━━━━\r\n"
                 + "■M3U8 Downloader 用户日志\r\n\r\n"
-                + "■" + System.DateTime.Now.ToString("F") + "\r\n\r\n"
+                + "■" + DateTime.Now.ToString("F") + "\r\n\r\n"
                 + "■输入：" + textBox_Adress.Text + "\r\n\r\n"
                 + "■输出：" + textBox_DownloadPath.Text + "\\" + textBox_Name.Text + houzhui.Text + "\r\n\r\n"
                 + "■FFmpeg命令：ffmpeg " + Command.Text + "\r\n"
@@ -414,7 +413,7 @@ namespace M3U8_Downloader
             {
                 if (Process.GetProcessById(ffmpegid) != null)
                 {
-                    if (MessageBox.Show("已启动下载进程，确认退出吗？\n（这有可能是强制的）", "请确认您的操作", MessageBoxButtons.YesNo, MessageBoxIcon.Warning) == System.Windows.Forms.DialogResult.Yes)
+                    if (MessageBox.Show("已启动下载进程，确认退出吗？\n（这有可能是强制的）", "请确认您的操作", MessageBoxButtons.YesNo, MessageBoxIcon.Warning) == DialogResult.Yes)
                     {
                         Stop();
                         MessageBox.Show("已经发送命令！\n若进程仍然存在则强制结束！", "请确认");
@@ -436,7 +435,7 @@ namespace M3U8_Downloader
                     }
                     else
                     {
-                        e.Cancel=true;
+                        e.Cancel = true;
                     }
                 }
             }
@@ -447,47 +446,27 @@ namespace M3U8_Downloader
             }
         }
     }
-    }
+}
 
 
 namespace M3U8_Downloader
 {
-    class MyProgressBar : ProgressBar //新建一个MyProgressBar类，它继承了ProgressBar的所有属性与方法
-    {
-        public MyProgressBar()
-        {
-            base.SetStyle(ControlStyles.UserPaint, true);//使控件可由用户自由重绘
-        }
-        protected override void OnPaint(PaintEventArgs e)
-        {
-            SolidBrush brush = null;
-            Rectangle bounds = new Rectangle(0, 0, base.Width, base.Height);
-            e.Graphics.FillRectangle(new SolidBrush(this.BackColor), 1, 1, bounds.Width - 2, bounds.Height - 2);//此处完成背景重绘，并且按照属性中的BackColor设置背景色
-            bounds.Height -= 4;
-            bounds.Width = ((int)(bounds.Width * (((double)base.Value) / ((double)base.Maximum)))) - 4;//是的进度条跟着ProgressBar.Value值变化
-            brush = new SolidBrush(this.ForeColor);
-            e.Graphics.FillRectangle(brush, 2, 2, bounds.Width, bounds.Height);//此处完成前景重绘，依旧按照Progressbar的属性设置前景色
-        }
-    }
-
     // 1.定义委托  
     public delegate void DelReadStdOutput(string result);
     public delegate void DelReadErrOutput(string result);
 
-    public partial class Form1 : Form
+    public partial class FormMain : Form
     {
         // 2.定义委托事件  
         public event DelReadStdOutput ReadStdOutput;
         public event DelReadErrOutput ReadErrOutput;
-
 
         private void button_Download_Click(object sender, EventArgs e)
         {
             if (!Directory.Exists(textBox_DownloadPath.Text))//若文件夹不存在则新建文件夹   
             {
                 Directory.CreateDirectory(textBox_DownloadPath.Text); //新建文件夹   
-            }  
-
+            }
             else
             {
                 textBox_Info.Text = "";
@@ -501,7 +480,7 @@ namespace M3U8_Downloader
                 timer1.Enabled = true;
                 timer2.Enabled = true;
             }
-            
+
         }
 
         private void Exist_Run(string FileName)
@@ -531,12 +510,12 @@ namespace M3U8_Downloader
             if (radioButton3.Checked == true) { ExtendName = "TS"; }
             if (radioButton4.Checked == true) { ExtendName = "FLV"; }
 
-           
-            XmlTextWriter xml = new XmlTextWriter(@System.Environment.GetFolderPath(System.Environment.SpecialFolder.MyDocuments) + "\\M3u8_Downloader_Settings.xml", Encoding.UTF8);
+
+            XmlTextWriter xml = new XmlTextWriter(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) + "\\M3u8_Downloader_Settings.xml", Encoding.UTF8);
             xml.Formatting = Formatting.Indented;
             xml.WriteStartDocument();
             xml.WriteStartElement("Settings");
-            
+
             xml.WriteStartElement("DownPath"); xml.WriteCData(textBox_DownloadPath.Text); xml.WriteEndElement();
             xml.WriteStartElement("ExtendName"); xml.WriteCData(ExtendName); xml.WriteEndElement();
 
@@ -544,7 +523,7 @@ namespace M3U8_Downloader
             xml.WriteEndDocument();
             xml.Flush();
             xml.Close();
-            
+
         }
 
         private void Download()
@@ -664,6 +643,6 @@ namespace M3U8_Downloader
             timer2.Enabled = false;
             label8.Text = "";
             MessageBox.Show("命令执行结束！", "M3U8 Downloader", MessageBoxButtons.OK, MessageBoxIcon.Information, MessageBoxDefaultButton.Button1, MessageBoxOptions.DefaultDesktopOnly);  // 执行结束后触发
-        }  
+        }
     }
 }

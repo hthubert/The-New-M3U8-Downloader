@@ -2,7 +2,7 @@
 
 namespace M3U8_Downloader
 {
-    partial class Form1
+    partial class FormMain
     {
         /// <summary>
         /// 必需的设计器变量。
@@ -31,7 +31,7 @@ namespace M3U8_Downloader
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
-            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Form1));
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FormMain));
             this.button_Download = new System.Windows.Forms.Button();
             this.button_Quit = new System.Windows.Forms.Button();
             this.label1 = new System.Windows.Forms.Label();

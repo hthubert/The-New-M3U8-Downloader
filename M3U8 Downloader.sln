@@ -1,20 +1,37 @@
 ﻿
-Microsoft Visual Studio Solution File, Format Version 11.00
-# Visual C# Express 2010
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.29306.81
+MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "M3U8 Downloader", "M3U8 Downloader\M3U8 Downloader.csproj", "{04EDC557-D42B-4E45-82CA-86A65C32F186}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Debug|x64 = Debug|x64
 		Debug|x86 = Debug|x86
+		Release|Any CPU = Release|Any CPU
+		Release|x64 = Release|x64
 		Release|x86 = Release|x86
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{04EDC557-D42B-4E45-82CA-86A65C32F186}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{04EDC557-D42B-4E45-82CA-86A65C32F186}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{04EDC557-D42B-4E45-82CA-86A65C32F186}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{04EDC557-D42B-4E45-82CA-86A65C32F186}.Debug|x64.Build.0 = Debug|Any CPU
 		{04EDC557-D42B-4E45-82CA-86A65C32F186}.Debug|x86.ActiveCfg = Debug|x86
 		{04EDC557-D42B-4E45-82CA-86A65C32F186}.Debug|x86.Build.0 = Debug|x86
+		{04EDC557-D42B-4E45-82CA-86A65C32F186}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{04EDC557-D42B-4E45-82CA-86A65C32F186}.Release|Any CPU.Build.0 = Release|Any CPU
+		{04EDC557-D42B-4E45-82CA-86A65C32F186}.Release|x64.ActiveCfg = Release|x64
+		{04EDC557-D42B-4E45-82CA-86A65C32F186}.Release|x64.Build.0 = Release|x64
 		{04EDC557-D42B-4E45-82CA-86A65C32F186}.Release|x86.ActiveCfg = Release|x86
 		{04EDC557-D42B-4E45-82CA-86A65C32F186}.Release|x86.Build.0 = Release|x86
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {68AF7236-59FC-401E-9C09-DB8954ADCE52}
 	EndGlobalSection
 EndGlobal
